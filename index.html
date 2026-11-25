@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bàn bi-a elip · Phòng thực hành Toán</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f5ee;color:#203c33;font:16px/1.45 system-ui,sans-serif}main{max-width:1350px;margin:auto;padding:32px clamp(14px,4vw,60px)}header{border-bottom:1px solid #c9d1c6;padding-bottom:20px;margin-bottom:20px}small{font-weight:750;letter-spacing:.14em;color:#586e60}h1{font:600 clamp(34px,4vw,54px)/1.05 Georgia,serif;margin:9px 0}h2{font:600 23px Georgia,serif;margin:0 0 14px}p{margin:6px 0}article{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start}.stage,aside,details{background:#fffef8;border:1px solid #cbd2c7;border-radius:16px;overflow:hidden}.bar,.bottom,aside,details{padding:18px}.bar,.controls,.line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.bar,.line{justify-content:space-between}.bar h2{margin:0}.board{background:#102e27;color:#d3e8d9}canvas{width:100%;height:clamp(320px,37vw,490px);display:block;touch-action:none;cursor:crosshair}.legend{display:flex;justify-content:center;gap:20px;font-size:13px;padding:0 10px 14px}.legend span:first-child{color:#ffdb8a}button,select,input[type=number]{font:inherit;color:inherit;background:#fffef8;border:1px solid #abbbae;border-radius:8px;padding:8px 10px}button,select,summary,input[type=checkbox]{cursor:pointer}button:hover{background:#eef2e9}button[aria-pressed=true],button.primary{background:#165840;color:white;border-color:#165840}button.primary{font-weight:700;min-width:110px}button:disabled,input:disabled,select:disabled{opacity:.55;cursor:default}button:focus-visible,input:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid #e3a031;outline-offset:2px}.bottom p{min-height:24px;margin:0 0 10px}.note{font-size:14px;color:#50665c}.controls{margin:8px 0}.section+.section{border-top:1px solid #d7dfd4;margin-top:18px;padding-top:18px}label{font-size:14px}select{width:100%;margin:5px 0}.numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.numbers input{width:100%;padding:7px}.numbers label{display:block}.numbers input:disabled{background:#e5ece1;opacity:1}.error{color:#a03621;font-size:14px}.readout{font-variant-numeric:tabular-nums;font-weight:700}input[type=range]{width:100%;accent-color:#236447}input[type=checkbox]{accent-color:#236447}.block{display:block;margin-top:12px}summary{font-weight:650}details{margin-top:16px}details p{margin:10px 0}.status{font-size:14px;font-weight:650;color:#51695c}@media(max-width:860px){article{grid-template-columns:1fr}canvas{height:clamp(240px,55vw,410px)}main{padding-top:18px}}@media(max-width:450px){.bar,.bottom,aside{padding:13px}.legend{gap:10px;font-size:12px}}
+</style>
+<main><header><small>TOÁN 10 &nbsp; / &nbsp; THỰC HÀNH STEM</small><h1>Bàn bi-a elip</h1><p>Khám phá đường đi của bi sau khi chạm thành bàn.</p></header>
+<article><section><div class="stage"><div class="bar"><h2>Mặt bàn</h2><span class="status" id="stats"></span></div><div class="board"><canvas id="table" aria-label="Bàn bi-a elip, chạm để ngắm hoặc đặt bi"></canvas><div class="legend"><span>┄ Đường ngắm</span><span>━ Đường bi đã đi</span></div></div>
+<div class="bottom"><p id="status" aria-live="polite"></p><div class="controls"><button class="primary" id="shoot">Đánh bi</button><button id="retry">Thử lại cú này</button></div><div class="controls"><button id="aimMode" aria-pressed="true">Ngắm hướng</button><button id="placeMode" aria-pressed="false">Đặt bi</button><label><input type="checkbox" id="guide" checked> Hiện đường ngắm</label></div><p class="note" id="hint"></p></div></div>
+<details><summary>Gợi ý thực hành và giả thiết mô hình</summary><p>Đặt bi ở tiêu điểm đối diện lỗ, chọn một hướng chếch và đánh. Đổi góc rồi thử lại. Sau đó đặt bi ở vị trí khác, ngắm sao cho bi đi qua tiêu điểm đối diện trước khi chạm thành. So sánh kết quả khi lệch hướng vài độ.</p><p>Bi được coi là một chất điểm. Tại thành elip, góc phản xạ bằng góc tới. Bi chậm dần trên mặt bàn và được ghi nhận vào lỗ khi tâm đi vào vùng tròn đánh dấu. Lực quá nhỏ có thể khiến bi dừng giữa đường. Bán kính bi, độ xoáy và biến dạng thành bàn thực tế chưa được mô hình hóa.</p></details></section>
+<aside><section class="section"><h2>Hình học bàn</h2><label for="pair">Chọn hai đại lượng để chỉnh</label><select id="pair"><option value="AB">Trục lớn và trục bé</option><option value="AC">Trục lớn và tiêu cự</option><option value="BC">Trục bé và tiêu cự</option></select><div class="numbers"><label>2a (cm)<input type="number" aria-label="Trục lớn" id="A" value="100" step="any"></label><label>2b (cm)<input type="number" aria-label="Trục bé" id="B" value="64" step="any"></label><label>2c (cm)<input type="number" aria-label="Tiêu cự" id="C" step="any"></label></div><p class="note">Tiêu cự F₁F₂ = 2c, với c² = a² − b².</p><p id="error" class="error" role="alert"></p>
+<label class="block" for="hole">Vị trí lỗ</label><select id="hole"><option value="1">Tiêu điểm F₂ (bên phải)</option><option value="-1">Tiêu điểm F₁ (bên trái)</option></select></section>
+<section class="section"><h2>Cú đánh</h2><div class="line"><label for="angle">Góc bắn</label><output class="readout" id="angleOut"></output></div><input type="range" id="angle" min="-180" max="180" step="0.1" value="32"><div class="line"><label for="power">Lực bắn</label><output class="readout" id="powerOut"></output></div><input type="range" id="power" min="1" max="100" value="70"><div class="controls"><button id="focus">Đặt bi tại F₁</button><button id="target">Ngắm qua F₁</button></div></section></aside></article></main>
+<script>
+'use strict';
+const el=id=>document.getElementById(id),cv=el('table'),ctx=cv.getContext('2d');
+const tau=2*Math.PI,fmt=n=>Number(n.toFixed(2)).toLocaleString('vi-VN');
+let a=50,b=32,c=Math.sqrt(a*a-b*b),sign=1,angle=32,power=70,mode='aim',phase='ready',valid=true;
+let start,pos,dir,speed,trail=[],frame,last=0,bounces=0,shots=0,hits=0,scale=1,w,h;
+const point=(x,y)=>({x,y}),focus=()=>point(-sign*c,0),hole=()=>point(sign*c,0);
+const radius=()=>Math.min(.033*b,.33*c,.64*(a-c));
+function reset(message='Sẵn sàng đánh bi.'){
+ cancelAnimationFrame(frame);phase='ready';pos={...start};trail=[];bounces=0;
+ el('status').textContent=message;sync();draw();
+}
+function sync(){
+ const running=phase==='running';
+ for(const id of ['angle','power','pair','hole','aimMode','placeMode','focus','target'])el(id).disabled=running;
+ for(const id of ['A','B','C'])el(id).disabled=running||!el('pair').value.includes(id);
+ el('shoot').disabled=running||!valid;el('shoot').textContent=phase==='done'?'Đánh lại':'Đánh bi';
+ el('angleOut').value=fmt(angle)+'°';el('powerOut').value=power+' %';
+ const other=sign===1?'F₁':'F₂';el('focus').textContent='Đặt bi tại '+other;el('target').textContent='Ngắm qua '+other;
+ el('target').disabled=running||Math.hypot(start.x+sign*c,start.y)<1e-8;
+ el('stats').textContent=hits+' vào lỗ / '+shots+' lượt';
+ el('aimMode').setAttribute('aria-pressed',mode==='aim');el('placeMode').setAttribute('aria-pressed',mode==='place');
+ el('hint').textContent=mode==='aim'?'Chạm vào mặt bàn để chọn hướng, hoặc chỉnh thanh góc bắn.':'Chạm vào một điểm trong lòng bàn để đặt bi.';
+}
+function geometry(){
+ const pair=el('pair').value;let [A,B,C]=['A','B','C'].map(k=>el(k).valueAsNumber);
+ if(pair==='AB')C=Math.sqrt((A-B)*(A+B));
+ if(pair==='AC')B=Math.sqrt((A-C)*(A+C));
+ if(pair==='BC')A=Math.hypot(B,C);
+ valid=A>=10&&A<=300&&B>0&&B<A&&B/A>=.15&&C/A>=.04&&C<A;
+ let derived=[...'ABC'].find(k=>!pair.includes(k));
+ if(!valid){el(derived).value='';el('error').textContent='Chọn 10 ≤ 2a ≤ 300 cm, 2b ≥ 15% trục lớn, 2c ≥ 4% trục lớn và 0 < 2b, 2c < 2a.';sync();return;}
+ el('error').textContent='';el(derived).value=Number(({A,B,C})[derived].toFixed(6));a=A/2;b=B/2;c=C/2;start=focus();reset();
+}
+function direction(){let t=angle*Math.PI/180;return point(Math.cos(t),Math.sin(t))}
+function nextEvent(p,d){
+ const u=d.x*d.x/(a*a)+d.y*d.y/(b*b),v=p.x*d.x/(a*a)+p.y*d.y/(b*b),q=(p.x/a)**2+(p.y/b)**2-1;
+ const wall=(-v+Math.sqrt(Math.max(0,v*v-u*q)))/u;
+ const hx=hole().x-p.x,hy=-p.y,along=hx*d.x+hy*d.y,side=hx*d.y-hy*d.x,disc=radius()**2-side**2;
+ if(disc>=0&&along>=0){const t=Math.max(0,along-Math.sqrt(disc));if(t<=wall)return {t,hole:true};}
+ return {t:wall,hole:false};
+}
+function reflect(p,d){const nx=p.x/(a*a),ny=p.y/(b*b),k=2*(d.x*nx+d.y*ny)/(nx*nx+ny*ny);return point(d.x-k*nx,d.y-k*ny)}
+const advance=(p,d,t)=>point(p.x+t*d.x,p.y+t*d.y);
+function draw(){
+ if(!pos||!w)return;
+ ctx.setTransform(cv.width/w,0,0,cv.height/h,0,0);ctx.clearRect(0,0,w,h);
+ const ox=w/2,oy=h/2;scale=Math.min((w-46)/(2*a),(h-54)/(2*b));const X=x=>ox+x*scale,Y=y=>oy-y*scale;
+ function ellipse(rx,ry,fill,stroke,lw){ctx.beginPath();ctx.ellipse(ox,oy,rx,ry,0,0,tau);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
+ function dot(p,r,fill,stroke){ctx.beginPath();ctx.arc(X(p.x),Y(p.y),r,0,tau);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.lineWidth=1.6;ctx.strokeStyle=stroke;ctx.stroke()}}
+ function path(points,color,width,dash=[]){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(X(p.x),Y(p.y)):ctx.moveTo(X(p.x),Y(p.y)));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.stroke();ctx.setLineDash([])}
+ const felt=ctx.createLinearGradient(0,Y(b),0,Y(-b));felt.addColorStop(0,'#28785d');felt.addColorStop(1,'#195441');
+ ellipse(a*scale+9,b*scale+9,'#704f33','#c89966',2);ellipse(a*scale,b*scale,felt,'#93b29a',2);
+ path([point(-a,0),point(a,0)],'#80ab9177',1,[3,6]);path([point(0,-b),point(0,b)],'#80ab9177',1,[3,6]);
+ if(phase==='ready'&&el('guide').checked&&valid){let d=direction(),event=nextEvent(start,d),end=advance(start,d,event.t);let points=[start,end];if(!event.hole){d=reflect(end,d);event=nextEvent(end,d);points.push(advance(end,d,event.t));}path(points,'#ffde8b',1.8,[6,5]);const arrow=advance(start,direction(),Math.min(.15*a,nextEvent(start,direction()).t*.6));ctx.save();ctx.translate(X(arrow.x),Y(arrow.y));ctx.rotate(-angle*Math.PI/180);ctx.fillStyle='#ffde8b';ctx.beginPath();ctx.moveTo(1,0);ctx.lineTo(-7,-4);ctx.lineTo(-7,4);ctx.fill();ctx.restore()}
+ if(trail.length)path([...trail,pos],'#c6f6e1',2);
+ dot(hole(),radius()*scale,'#071812','#dfbc75');dot(focus(),3,'#ffdb8a');
+ ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff5d6';for(const s of [-1,1])ctx.fillText(s<0?'F₁':'F₂',X(s*c)+ (c*scale<14?s*6:0),Y(0)-12);
+ if(!(phase==='done'&&Math.hypot(pos.x-hole().x,pos.y)<=radius()+1e-7))dot(pos,5.5,'#fffbed','#294a3c');
+}
+function resize(){let r=cv.getBoundingClientRect();w=r.width;h=r.height;let density=Math.min(devicePixelRatio||1,3);cv.width=Math.round(w*density);cv.height=Math.round(h*density);draw()}
+function finish(message){phase='done';el('status').textContent=message+' Số lần chạm thành: '+bounces+'.';sync();draw()}
+function tick(now){
+ const dt=Math.min((now-last)/1000,.06);last=now;const friction=.24*a;
+ const endSpeed=Math.max(0,speed-friction*dt);let distance=(speed*speed-endSpeed*endSpeed)/(2*friction);speed=endSpeed;
+ while(distance>1e-10){const event=nextEvent(pos,dir);if(event.t>distance){pos=advance(pos,dir,distance);break}
+ pos=advance(pos,dir,event.t);distance-=event.t;
+ if(event.hole){hits++;finish('Bi đã vào lỗ!');return}
+ trail.push({...pos});dir=reflect(pos,dir);bounces++;
+ }
+ if(speed===0){finish('Bi đã dừng trên mặt bàn.');return}draw();frame=requestAnimationFrame(tick)
+}
+el('shoot').onclick=()=>{if(!valid||phase==='running')return;phase='running';shots++;bounces=0;pos={...start};trail=[{...start}];dir=direction();speed=a*(.14+.018*power);last=performance.now();el('status').textContent='Bi đang lăn…';sync();frame=requestAnimationFrame(tick)};
+el('retry').onclick=()=>reset('Đã đưa bi về vị trí đầu của cú đánh.');
+for(const id of ['A','B','C','pair'])el(id).oninput=geometry;
+el('hole').onchange=()=>{sign=Number(el('hole').value);start=focus();reset()};
+function setAngle(n){angle=n;el('angle').value=n;reset()}
+el('angle').oninput=()=>setAngle(Number(el('angle').value));el('power').oninput=()=>{power=Number(el('power').value);reset()};
+el('focus').onclick=()=>{start=focus();reset()};el('target').onclick=()=>setAngle(Math.atan2(-start.y,focus().x-start.x)*180/Math.PI);
+for(const [id,m] of [['aimMode','aim'],['placeMode','place']])el(id).onclick=()=>{mode=m;reset()};
+el('guide').onchange=draw;
+cv.onpointerdown=e=>{if(phase==='running'||!valid)return;const r=cv.getBoundingClientRect(),p=point((e.clientX-r.left-w/2)/scale,(h/2-e.clientY+r.top)/scale);
+ if(mode==='place'){if((p.x/a)**2+(p.y/b)**2>=.999999||Math.hypot(p.x-hole().x,p.y)<=radius()){el('status').textContent='Hãy đặt bi bên trong bàn và ngoài lỗ.';return}start=p;mode='aim';reset('Đã đặt bi. Chạm vào bàn để ngắm hướng.')}
+ else if(Math.hypot(p.x-start.x,p.y-start.y)>1e-6)setAngle(Math.atan2(p.y-start.y,p.x-start.x)*180/Math.PI)};
+geometry();new ResizeObserver(resize).observe(cv);resize();
+</script></html>
